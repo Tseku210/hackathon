@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model PomodoraSetting {
+  id             String @id @default(uuid())
+  pomodoroTime   Int?   @default(25)
+  shortbreakTime Int?   @default(5)
+  longBreakTime  Int?   @default(15)
+  breakCount     Int?   @default(5)
+  goal           Int?   @default(3)
+  sound          Int?   @default(1)
+  userId         String
+}
+
+model ToDoCategory {
+  id     String      @id @default(uuid())
+  name   String
+  color  String
+  userId String
+  items  TodoItems[]
+}
+
+model TodoItems {
+  id        String     @id @default(uuid())
+  name      String
+  deadline  DateTime
+  section   Int?       @default(3)
+  reminder  Boolean?   @default(false)
+  done      Boolean?   @default(false)
+  time      TodoTime[]
+  createdAt DateTime?  @default(now())
+  ToDoCategory   ToDoCategory? @relation(fields: [toDoCategoryId], references: [id])
+  toDoCategoryId String?
+}
+
+model TodoTime {
+  id          String     @id @default(uuid())
+  date        DateTime
+  duration    Int
+  TodoItems   TodoItems? @relation(fields: [todoItemsId], references: [id])
+  todoItemsId String?
+}
